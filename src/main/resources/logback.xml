@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <property name="PROJECT_ID" value="${HOSTNAME}"/>
+    <property name="OPENSHIFT_LOG_DIR" value="${OPENSHIFT_LOG_DIR:-logs}"/>
+    <property name="LOG_FILE" value="${OPENSHIFT_LOG_DIR}/${PROJECT_ID}.log"/>
+    <property name="LOG_LEVEL" value="${LOG_LEVEL:-warn}"/>
+    <property name="LOG_CONSOLE_APPENDER" value="${LOG_CONSOLE_APPENDER:-CONSOLE}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        	<!--  consider using this (google for specifics):
+        		<throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+        	-->
+            <!-- something about the latest spring-cloud-config-server dep causes the following line to induce vomiting:
+            <charset>utf8</charset>
+            -->
+            <includeMdc>false</includeMdc>
+        </encoder>
+    </appender>
+
+    <appender name="LOCAL_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+	    <pattern>%d %-5level [%thread] %logger{0}: %msg%n</pattern>
+	    <outputPatternAsHeader>true</outputPatternAsHeader>
+	  </encoder>
+	</appender>
+
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeMdc>false</includeMdc>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>1</maxIndex>
+            <fileNamePattern>${LOG_FILE}.%i</fileNamePattern>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="${LOG_CONSOLE_APPENDER}"/>
+    </root>
+    <logger name="com.optum.ims.security.sdk" level="WARN"/>
+    <logger name="com.optum.ims.security.sdk" level="WARN"/>
+    <logger name="org.apache.http" level="WARN" />
+	<logger name="org.springframework.web" level="WARN" />
+	<logger name="org.springframework.boot" level="WARN" />
+	<logger name="org.springframework.cloud" level="WARN" />
+	<logger name="org.mongodb.driver" level="WARN" />
+	<logger name="org.apache.kafka" level="WARN" />
+
+
+</configuration>

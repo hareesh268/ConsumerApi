@@ -1,0 +1,94 @@
+plan:
+  name: lite-new/jvm-spring-contrast-update
+  repository: https://github.optum.com/link-utilities/naftis-plans.git
+application:
+  name: ds-consumer-api
+  image: digital-security/ds-consumer-api
+  imageRegistry: optum-docker
+  askId: digitalsecurity
+pipeline:
+  tools:
+    javaVersion: 11.0
+  adapter: gradle
+  credentials:
+    imageRegistry: dsopsuser
+    ose: dsopsuser
+    newrelic: null
+  pr:
+    waitTimeout: 900
+    cluster: origin-elr-core-nonprod
+    namespace: link-ds-dev
+    e2e: false
+    vars:
+      configRoute: ds-config-dev
+      splunk:
+        index: cba_digital_security
+  deployment:
+    vars:
+      newrelic:
+        appName: Digital Security - Consumer API
+        licenseKey: d565a68deb262a4ed875493ee3ee96a729219411
+        labels: Askid:UHGWM110-026580
+      monitoring:
+        prometheus: false
+      splunk:
+        index: cba_digital_security
+      capacity:
+        cpuLimit: 1
+        memory: 2048Mi
+        cpu: 250m
+        jvmMin: 40m
+        jvmMax: 1500m
+    environments:
+      dev:
+        clusters:
+          - origin-elr-core-nonprod
+        namespace: link-ds-dev
+        vars:
+          replicas: 0
+          configRoute: ds-config-dev
+          capacity:
+            cpu: 500m
+            cpuLimit: 2000m
+            memory: 3000Mi
+            livenessInitialDelay: 180
+            readinessInitialDelay: 180
+          splunk:
+            index: cba_digital_security
+          logLevel: WARN
+      test:
+        clusters:
+          - origin-elr-core-nonprod
+        namespace: link-ds-test
+        vars:
+          replicas: 0
+          configRoute: ds-config-test
+          splunk:
+            index: cba_digital_security
+          logLevel: WARN
+      stage:
+        clusters:
+          - ocp-elr-core
+        namespace: link-ds-stage
+        prompt: true
+        vars:
+          replicas: 2
+          newrelic:
+            appName: Stage - Digital Security - Consumer API
+          configRoute: ds-config-stage
+          splunk:
+            index: cba_digital_security
+          logLevel: WARN
+      prod:
+        clusters:
+          - ocp-elr-core
+        namespace: link-ds-prod
+        prompt: true
+        vars:
+          replicas: 2
+          newrelic:
+            appName: Prod - Digital Security - Consumer API
+          configRoute: ds-config-prod
+          splunk:
+            index: cba_digital_security
+          logLevel: WARN

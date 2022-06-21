@@ -1,0 +1,67 @@
+spring:
+  config:
+    use-legacy-processing: true
+  application:
+    name: ds-consumer-api
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-dev.origin-elr-core-nonprod.optum.com/
+      #username: 'erclaims'
+      #password: 'penguins1'
+
+---
+
+spring:
+  profiles: local
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-dev.origin-elr-core-nonprod.optum.com/
+        #uri: http://localhost:1700
+
+---
+
+spring:
+  profiles: dev
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-dev.origin-elr-core-nonprod.optum.com/
+
+---
+
+spring:
+  profiles: test
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-test.origin-elr-core-nonprod.optum.com/
+
+---
+
+spring:
+  profiles: stage
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-stage.ocp-elr-core.optum.com/
+
+---
+
+spring:
+  profiles: prod
+  cloud:
+    config:
+      uri: http://link:l1nk3d1n@link-ds-config-prod.ocp-elr-core.optum.com/
+
+encrypt:
+  keyStore:
+    location: classpath:stores/link-cfg-encryption-prod.jks
+    password:
+    alias: link-config-encryption-prod
+    secret:
+
+---
+      
+encrypt:
+  keyStore:
+    location: classpath:stores/link-cfg-encryption-nonprod.jks
+    password: IH8myc@r
+    alias: link-config-encryption-np
+    secret: IH8myc@r      
